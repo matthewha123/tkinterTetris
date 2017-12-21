@@ -28,17 +28,37 @@ class Board(tk.Canvas):
         for y in range(len(self.grid)):
             for x in range(len(self.grid[y])):
                 self.create_rectangle(x*self.blockSideL,(y)*self.blockSideL,(x+1)*self.blockSideL,(y+1)*self.blockSideL, outline = 'black', fill = self.c[self.grid[y][x]])
-    
+    def clear(self):
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                self.grid[y][x] = 0
     #need to add logic to make every other square 0.
     #also todo, listen for keyboard press and also have an update function
     def placeBlock(self,Block):
-#        if(not(Block in self.blocks)):
-#            self.blocks.append(Block)
+        if(not(Block in self.blocks)):
+            self.blocks.append(Block)
         self.grid[Block.getPos()[0]-1][Block.getPos()[1]-1] = Block.getColor()
-        print(self.grid)
     def update(self):
-#        for b in blocks:
-#            placeBlock(b)
+        self.clear()
+        for b in self.blocks:
+            self.placeBlock(b)
         self.drawBoard()
     def mainloop(self):
         super().mainloop()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+
+        

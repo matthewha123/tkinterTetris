@@ -10,7 +10,14 @@ import Board
 import Block
 
 
-
+def keyPressed(event, activeBlocks, app):
+    if(event.keysym == "Left"):
+        for b in activeBlocks:
+            b.mL(app)
+def timerFired(app):
+    app.update()
+    delay = 250 #milliseconds
+    app.after(delay, timerFired, app)
     
 #have a predefined array of different bArrays that correspond to different pieces
         #these bArrays will have one reference block, then, the other blocks will be set off of that block's position
@@ -31,10 +38,9 @@ class Piece(object):
 root = tk.Tk()
 app = Board.Board(400,800,master = root)
 b = Block.Block([5,6],1)
-print(b.getPos())
+activeBlocks = []
+activeBlocks.append(b)
 app.placeBlock(b)
-app.drawBoard()
-b.mR(app)
-app.placeBlock(b)
-app.drawBoard()
+root.bind('<Key>',lambda event: keyPressed(event,activeBlocks, app))
+timerFired(app)
 app.mainloop()
