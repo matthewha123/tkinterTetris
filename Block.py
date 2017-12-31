@@ -14,33 +14,18 @@ class Block(object):
         self.pos = [self.x,self.y]
     def move(self,dr,board,piece):
         if(dr == 'r'):
-            if(validMove(self,self.x+1,self.y,board,piece)):
-                self.x += 1
-                board.move(self.b,25,0)
-            else:
-                print('fuck')
+            self.x += 1
+            board.move(self.b,25,0)
         elif(dr == 'l'):
-            if(validMove(self,self.x-1,self.y,board,piece)):
-                self.x += -1
-                board.move(self.b,-25,0)
+            self.x += -1
+            board.move(self.b,-25,0)
         elif(dr == 'u'):
-            if(validMove(self,self.x,self.y-1,board,piece)):
-                self.y += -1
-                board.move(self.b,0,-25)
+            self.y += -1
+            board.move(self.b,0,-25)
         elif(dr == 'd'):
-            if(validMove(self,self.x,self.y+1,board,piece)):
-                self.y += 1
-                board.move(self.b,0,25)    
-#have to change it so that move is looped through elsewhere, like here
-def validMove(block,dx, dy, board, piece):
-    #oL= set(board.find_overlapping((block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
-    oL= set(board.find_overlapping((dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
-    other = set(board.find_all()) - set(board.find_withtag('grid')) - set(piece.blockIDs)
-    print(oL & other)
-    if(oL & other):
-        return False
-    else:
-        return True
+            self.y += 1
+            board.move(self.b,0,25)    
+
 
 class Piece(object):
     choices = {'I':('cyan',(0,0),(1,0),(2,0),(3,0)),
@@ -53,7 +38,50 @@ class Piece(object):
     def __init__(self,choice,sPos,board):
         self.blocks = []
         self.blockIDs = []
+        self.active = True
         for coord in (self.choices[choice][1:]):
             b = Block(coord[0]+sPos, coord[1]+sPos,self.choices[choice][0],board)
             self.blocks.append(b)
             self.blockIDs.append(b.b)
+    def validMove(self,block,x,dx, y,dy, board, piece):
+        #oL= set(board.find_overlapping((block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
+        oL= set(board.find_overlapping((x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
+        oLStop = set(board.find_overlapping((x)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
+        other = set(board.find_all()) - set(board.find_withtag('grid')) - set(piece.blockIDs)
+        print(oL & other)
+        if((x+dx)<0 or (x+dx) > 9 or (y+dy)<0 or (y+dy)>19):
+            if(y+dy>18):
+                self.active = False
+            return False
+        if(oL & other):
+            if(oLStop & other):
+                self.active = False
+            return False
+        else:
+            return True
+    def move(self,dr,dx,dy,board):
+        for b in self.blocks:
+            if(self.validMove(b,b.x,dx,b.y,dy,board,self)):
+                continue
+            else:
+                return False
+        for b in self.blocks:
+            b.move(dr,board,self)
+    def rotate(self, omega, board):
+        #pivot piece is always the the third tuple in the piece dicitionary
+        #subtract coordinates of pivot from every other piece
+        #multiply by the rotation matrix
+        #return coordinates of each piece as the new coordinates
+        #check valid move with x and y as 0 and dx and dy as the new coordinates of every block
+        
+        #if they are valid moves then the for loop will complete with success
+        #once this occurs, the new coordinates are set for the pieces.
+        #these coordinates will have been stored in a dictionary for each of the pieces
+        
+        #counter clockwise matrix: [0,-1
+        #                           1, 0]
+        #clockwise matrix:         [0, 1
+        #                           -1, 0]
+        pass
+    def genRotationCoordinates(self,omega):
+        pass
