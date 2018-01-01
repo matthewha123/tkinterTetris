@@ -20,6 +20,11 @@ def keyPressed(event,p):
         p.move('l',-1,0,board)
     if(event.keysym == 'Down'):
         p.move('d',0,1,board)
+    if(event.keysym == 'q'):
+        print('hi')
+        p.rotate('ccw',board)
+    if(event.keysym == 'e'):
+        p.rotate('cw',board)
 #    if(event.keysym == 'Up'):
 #        p.move('u',0,-1,board)
     
@@ -29,7 +34,7 @@ def timerFired(board):
     print(p.active)
     if(not p.active):
         p = genPiece(board,p)
-    p.move('d',0,1,board)
+    #p.move('d',0,1,board)
     board.after(delay,timerFired,board)
 def drawGrid(board):
     for x in range(WIDTH//BLOCK_SIZE):
@@ -46,7 +51,7 @@ def delRows(board):
         #then, for every item in that row, delete from the board
         #all blocks on the board, except for the active piece will move down 1
         #its gonna be a fine all with tag
-    
+    pass
             
 root = tk.Tk()
 board = tk.Canvas(root, width = WIDTH, height = HEIGHT)

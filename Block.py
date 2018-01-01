@@ -5,6 +5,7 @@ Created on Tue Dec 26 13:19:43 2017
 @author: matth
 """
 BLOCK_SIZE = 25
+import numpy as np
 
 class Block(object):
     def __init__(self,x,y,color,board):
@@ -68,6 +69,23 @@ class Piece(object):
         for b in self.blocks:
             b.move(dr,board,self)
     def rotate(self, omega, board):
+        rotM = 0
+        if(omega == 'ccw'): rotM = np.matrix( ((0,-1),(1,0)) )
+        else: rotM = np.matrix( ((0,1),(-1,0)) )
+        newCoords = []
+        for b in self.blockIDs:
+            #subtract pivot coordinate from each coordiate pair
+            pivotX = (board.coords(b)[0] / 25) - (board.coords(self.blockIDs[2])[0]/25)
+            pivotY = (board.coords(b)[1] / 25) - (board.coords(self.blockIDs[2])[1]/25)
+            
+            #multiply coordinates by rotation matrix
+            l = ((np.matrix((pivotX,pivotY)) * rotM) + np.matrix((board.coords(self.blockIDs[2])[0]/25,board.coords(self.blockIDs[2])[1]/25))).tolist()
+            newCoords.append((l[0][0],l[0][1],l[0][0]+1,l[0][1]+1))
+        
+        #if valid coordinates pass!Need to add that check
+        #pass in each new coordinate into validMove,using the x and y values as the dx and dy, x and y are 0
+        for i in range(len(self.blockIDs)):
+            board.coords(self.blockIDs[i],tuple([25*j for j in newCoords[i]]))
         #pivot piece is always the the third tuple in the piece dicitionary
         #subtract coordinates of pivot from every other piece
         #multiply by the rotation matrix
