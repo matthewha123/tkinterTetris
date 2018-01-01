@@ -25,8 +25,8 @@ def keyPressed(event,p):
         p.rotate('ccw',board)
     if(event.keysym == 'e'):
         p.rotate('cw',board)
-#    if(event.keysym == 'Up'):
-#        p.move('u',0,-1,board)
+    if(event.keysym == 'Up'):
+        p.move('u',0,-1,board)
     
 def timerFired(board):
     global p
@@ -34,7 +34,7 @@ def timerFired(board):
     print(p.active)
     if(not p.active):
         p = genPiece(board,p)
-    #p.move('d',0,1,board)
+    p.move('d',0,1,board)
     board.after(delay,timerFired,board)
 def drawGrid(board):
     for x in range(WIDTH//BLOCK_SIZE):

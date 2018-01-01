@@ -80,26 +80,14 @@ class Piece(object):
             
             #multiply coordinates by rotation matrix
             l = ((np.matrix((pivotX,pivotY)) * rotM) + np.matrix((board.coords(self.blockIDs[2])[0]/25,board.coords(self.blockIDs[2])[1]/25))).tolist()
+            if(not(self.validMove(b,0,l[0][0],0,l[0][1],board,self))):
+                return False
             newCoords.append((l[0][0],l[0][1],l[0][0]+1,l[0][1]+1))
         
         #if valid coordinates pass!Need to add that check
         #pass in each new coordinate into validMove,using the x and y values as the dx and dy, x and y are 0
         for i in range(len(self.blockIDs)):
             board.coords(self.blockIDs[i],tuple([25*j for j in newCoords[i]]))
-        #pivot piece is always the the third tuple in the piece dicitionary
-        #subtract coordinates of pivot from every other piece
-        #multiply by the rotation matrix
-        #return coordinates of each piece as the new coordinates
-        #check valid move with x and y as 0 and dx and dy as the new coordinates of every block
-        
-        #if they are valid moves then the for loop will complete with success
-        #once this occurs, the new coordinates are set for the pieces.
-        #these coordinates will have been stored in a dictionary for each of the pieces
-        
-        #counter clockwise matrix: [0,-1
-        #                           1, 0]
-        #clockwise matrix:         [0, 1
-        #                           -1, 0]
-        pass
+
     def genRotationCoordinates(self,omega):
         pass
