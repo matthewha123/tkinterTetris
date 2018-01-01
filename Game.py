@@ -20,13 +20,14 @@ def keyPressed(event,p):
         p.move('l',-1,0,board)
     if(event.keysym == 'Down'):
         p.move('d',0,1,board)
-    if(event.keysym == 'q'):
-        print('hi')
-        p.rotate('ccw',board)
-    if(event.keysym == 'e'):
-        p.rotate('cw',board)
-    if(event.keysym == 'Up'):
-        p.move('u',0,-1,board)
+    if(not(p.choice) == 'O'):
+        if(event.keysym == 'q'):
+            print('hi')
+            p.rotate('ccw',board)
+        if(event.keysym == 'e'):
+            p.rotate('cw',board)
+#    if(event.keysym == 'Up'):
+#        p.move('u',0,-1,board)
     
 def timerFired(board):
     global p

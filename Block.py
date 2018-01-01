@@ -37,6 +37,7 @@ class Piece(object):
                 'J':('blue',(0,0),(0,1),(1,1),(1,2)),
                 'L':('#ffa500',(0,1),(1,1),(2,1),(2,0))}
     def __init__(self,choice,sPos,board):
+        self.choice = choice
         self.blocks = []
         self.blockIDs = []
         self.active = True
@@ -88,6 +89,8 @@ class Piece(object):
         #pass in each new coordinate into validMove,using the x and y values as the dx and dy, x and y are 0
         for i in range(len(self.blockIDs)):
             board.coords(self.blockIDs[i],tuple([25*j for j in newCoords[i]]))
+            self.blocks[i].x = newCoords[i][0]
+            self.blocks[i].y = newCoords[i][1]
 
     def genRotationCoordinates(self,omega):
         pass
