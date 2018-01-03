@@ -7,6 +7,8 @@ Created on Tue Dec 26 12:54:57 2s017
 import tkinter as tk
 import block
 import random
+from PIL import Image, ImageTk
+from time import sleep
 
 BLOCK_SIZE = 25
 WIDTH = 250
@@ -51,22 +53,31 @@ def genPiece(board,p):
     return block.Piece(random.choice(keys),random.randint(0,6),board)
 
 def delRows(board,p):
+    global imgTK
     for i in range(19,0,-1):
         olDel = set(board.find_overlapping(BLOCK_SIZE/4,BLOCK_SIZE*(i)+(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*i + (BLOCK_SIZE *(3/4))))
         other = set(board.find_all()) - set(board.find_withtag('grid'))#- set(board.find_withtag('del'))
         if(len(olDel & other) == 10):
-            for i in list(olDel & other):
-                board.delete(i)
-            for i in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
-                board.move(i,0,25)
+            for j in list(olDel & other):
+#                im = board.create_image((BLOCK_SIZE*5,BLOCK_SIZE*i+(BLOCK_SIZE/2)),imgTK)
+                board.delete(j)
+#                sleep(0.5)
+#                board.delete(im)
+            for j in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
+                board.move(j,0,25)
 def lose(root,board,p):
     olLose = set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),(BLOCK_SIZE *(3/4))))
     other = set(board.find_all()) - set(board.find_withtag('grid'))- set(p.blockIDs)
     if(olLose & other):
         return True
+
 root = tk.Tk()
 board = tk.Canvas(root, width = WIDTH, height = HEIGHT)
 board.pack()
+#img = Image.open('explosion.jpg')
+#imgTK = ImageTk.PhotoImage(img)
+##board.image = imgTK
+#board.create_image((125,12.5),activeimage =imgTK, state = 'normal')
 drawGrid(board)
 
 p = block.Piece('I', 6,board)
