@@ -42,14 +42,14 @@ class Piece(object):
         self.blockIDs = []
         self.active = True
         for coord in (self.choices[choice][1:]):
-            b = Block(coord[0]+sPos, coord[1]+sPos,self.choices[choice][0],board)
+            b = Block(coord[0]+sPos, coord[1],self.choices[choice][0],board)
             self.blocks.append(b)
             self.blockIDs.append(b.b)
     def validMove(self,block,x,dx, y,dy, board, piece):
         #oL= set(board.find_overlapping((block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
         oL= set(board.find_overlapping((x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
         oLStop = set(board.find_overlapping((x)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
-        other = set(board.find_all()) - set(board.find_withtag('grid')) - set(piece.blockIDs)
+        other = set(board.find_all()) - set(board.find_withtag('grid')) - set(piece.blockIDs) - set(board.find_withtag('del'))
         print(oL & other)
         if((x+dx)<0 or (x+dx) > 9 or (y+dy)<0 or (y+dy)>19):
             if(y+dy>18):

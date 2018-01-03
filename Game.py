@@ -22,49 +22,54 @@ def keyPressed(event,p):
         p.move('d',0,1,board)
     if(not(p.choice) == 'O'):
         if(event.keysym == 'q'):
-            print('hi')
             p.rotate('ccw',board)
         if(event.keysym == 'e'):
             p.rotate('cw',board)
 #    if(event.keysym == 'Up'):
 #        p.move('u',0,-1,board)
     
-def timerFired(board):
+def timerFired(root,board):
     global p
     delay = 500
-    print(p.active)
+    if(lose(root,board,p)):
+        message = 'GAME OVER'
+        msg = tk.Message(root,text = message)
+        msg.config(font = ('Comic Sans',40))
+        msg.pack(side = 'top')
+        return
+    p.move('d',0,1,board)
     if(not p.active):
         p = genPiece(board,p)
-    p.move('d',0,1,board)
-    board.after(delay,timerFired,board)
+    delRows(board,p)
+    board.after(delay,timerFired,root,board)
 def drawGrid(board):
     for x in range(WIDTH//BLOCK_SIZE):
         for y in range(HEIGHT//BLOCK_SIZE):
             board.create_rectangle(x*BLOCK_SIZE, y*BLOCK_SIZE, (x+1)*BLOCK_SIZE, (y+1)*BLOCK_SIZE, outline = 'black', fill = 'white',tag = 'grid')
 def genPiece(board,p):
     keys = ['I','O','T', 'S', 'Z', 'J', 'L']
-    return block.Piece(random.choice(keys),6,board)
+    return block.Piece(random.choice(keys),random.randint(0,6),board)
 
-def delRows(board):
-    #make a rectangle for find overlapping for every row of the board
-    #this will be run on a constant loop in timerFired
-    #if the overlapping function returns a set of length of the a row
-        #then, for every item in that row, delete from the board
-        #all blocks on the board, except for the active piece will move down 1
-        #its gonna be a fine all with tag
-    pass
-            
+def delRows(board,p):
+    for i in range(19,0,-1):
+        olDel = set(board.find_overlapping(BLOCK_SIZE/4,BLOCK_SIZE*(i)+(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*i + (BLOCK_SIZE *(3/4))))
+        other = set(board.find_all()) - set(board.find_withtag('grid'))#- set(board.find_withtag('del'))
+        if(len(olDel & other) == 10):
+            for i in list(olDel & other):
+                board.delete(i)
+            for i in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
+                board.move(i,0,25)
+def lose(root,board,p):
+    olLose = set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),(BLOCK_SIZE *(3/4))))
+    other = set(board.find_all()) - set(board.find_withtag('grid'))- set(p.blockIDs)
+    if(olLose & other):
+        return True
 root = tk.Tk()
 board = tk.Canvas(root, width = WIDTH, height = HEIGHT)
 board.pack()
 drawGrid(board)
-#print(board.find_withtag('grid'))
 
-#print(set(board.find_overlapping(1*(BLOCK_SIZE)+(BLOCK_SIZE/4),0*(BLOCK_SIZE)+(BLOCK_SIZE/4),1*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),0*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4))) - set(board.find_withtag('blue')))
-
-d = block.Block(0,0,'#551a8b',board)
-c = block.Block(8,19,'red',board)
-p = block.Piece('T', 6,board)
+p = block.Piece('I', 6,board)
 root.bind('<Key>',lambda event: keyPressed(event,p))
-timerFired(board)
+timerFired(root,board)
 board.mainloop()
