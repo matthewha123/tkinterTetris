@@ -41,14 +41,14 @@ def timerFired(root,board):
         return
     p.move('d',0,1,board)
     if(not p.active):
-        p = genPiece(board,p)
+        p = genPiece(board)
     delRows(board,p)
     board.after(delay,timerFired,root,board)
 def drawGrid(board):
     for x in range(WIDTH//BLOCK_SIZE):
         for y in range(HEIGHT//BLOCK_SIZE):
             board.create_rectangle(x*BLOCK_SIZE, y*BLOCK_SIZE, (x+1)*BLOCK_SIZE, (y+1)*BLOCK_SIZE, outline = 'black', fill = 'white',tag = 'grid')
-def genPiece(board,p):
+def genPiece(board):
     keys = ['I','O','T', 'S', 'Z', 'J', 'L']
     return block.Piece(random.choice(keys),random.randint(0,6),board)
 
@@ -58,12 +58,14 @@ def delRows(board,p):
         olDel = set(board.find_overlapping(BLOCK_SIZE/4,BLOCK_SIZE*(i)+(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*i + (BLOCK_SIZE *(3/4))))
         other = set(board.find_all()) - set(board.find_withtag('grid'))#- set(board.find_withtag('del'))
         if(len(olDel & other) == 10):
-            for j in list(olDel & other):
+            for j in (olDel & other):
 #                im = board.create_image((BLOCK_SIZE*5,BLOCK_SIZE*i+(BLOCK_SIZE/2)),imgTK)
                 board.delete(j)
 #                sleep(0.5)
 #                board.delete(im)
-            for j in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
+#            for j in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
+#                board.move(j,0,25)
+            for j in (set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*(i-1) + (BLOCK_SIZE *(3/4))))-set(board.find_withtag('grid'))-set(p.blockIDs)):
                 board.move(j,0,25)
 def lose(root,board,p):
     olLose = set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),(BLOCK_SIZE *(3/4))))
@@ -80,7 +82,7 @@ board.pack()
 #board.create_image((125,12.5),activeimage =imgTK, state = 'normal')
 drawGrid(board)
 
-p = block.Piece('I', 6,board)
+p = genPiece(board)
 root.bind('<Key>',lambda event: keyPressed(event,p))
 timerFired(root,board)
 board.mainloop()
