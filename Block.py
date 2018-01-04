@@ -16,16 +16,16 @@ class Block(object):
     def move(self,dr,board,piece):
         if(dr == 'r'):
             self.x += 1
-            board.move(self.b,25,0)
+            board.move(self.b,BLOCK_SIZE,0)
         elif(dr == 'l'):
             self.x += -1
-            board.move(self.b,-25,0)
+            board.move(self.b,-BLOCK_SIZE,0)
         elif(dr == 'u'):
             self.y += -1
-            board.move(self.b,0,-25)
+            board.move(self.b,0,-BLOCK_SIZE)
         elif(dr == 'd'):
             self.y += 1
-            board.move(self.b,0,25)    
+            board.move(self.b,0,BLOCK_SIZE)    
 
 
 class Piece(object):
@@ -47,8 +47,14 @@ class Piece(object):
             self.blockIDs.append(b.b)
     def validMove(self,block,x,dx, y,dy, board, piece):
         #oL= set(board.find_overlapping((block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(block.x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(block.y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
-        oL= set(board.find_overlapping((x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
-        oLStop = set(board.find_overlapping((x)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),(x)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),(y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
+        oL= set(board.find_overlapping((x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE/4),
+                                       (y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),
+                                       (x+dx)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),
+                                       (y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
+        oLStop = set(board.find_overlapping((x)*(BLOCK_SIZE)+(BLOCK_SIZE/4),
+                                            (y+dy)*(BLOCK_SIZE)+(BLOCK_SIZE/4),
+                                            (x)*(BLOCK_SIZE)+(BLOCK_SIZE-BLOCK_SIZE/4),
+                                            (y+dy)*(BLOCK_SIZE) + (BLOCK_SIZE-BLOCK_SIZE/4)))
         other = set(board.find_all()) - set(board.find_withtag('grid')) - set(piece.blockIDs) - set(board.find_withtag('del'))
         print(oL & other)
         if((x+dx)<0 or (x+dx) > 9 or (y+dy)<0 or (y+dy)>19):
@@ -76,11 +82,13 @@ class Piece(object):
         newCoords = []
         for b in self.blockIDs:
             #subtract pivot coordinate from each coordiate pair
-            pivotX = (board.coords(b)[0] / 25) - (board.coords(self.blockIDs[2])[0]/25)
-            pivotY = (board.coords(b)[1] / 25) - (board.coords(self.blockIDs[2])[1]/25)
+            pivotX = (board.coords(b)[0] / BLOCK_SIZE) - (board.coords(self.blockIDs[2])[0]/BLOCK_SIZE)
+            pivotY = (board.coords(b)[1] / BLOCK_SIZE) - (board.coords(self.blockIDs[2])[1]/BLOCK_SIZE)
             
             #multiply coordinates by rotation matrix
-            l = ((np.matrix((pivotX,pivotY)) * rotM) + np.matrix((board.coords(self.blockIDs[2])[0]/25,board.coords(self.blockIDs[2])[1]/25))).tolist()
+            l = ((np.matrix((pivotX,pivotY)) * rotM) + \
+                 np.matrix((board.coords(self.blockIDs[2])[0]/BLOCK_SIZE,
+                            board.coords(self.blockIDs[2])[1]/BLOCK_SIZE))).tolist()
             if(not(self.validMove(b,0,l[0][0],0,l[0][1],board,self))):
                 return False
             newCoords.append((l[0][0],l[0][1],l[0][0]+1,l[0][1]+1))
@@ -88,7 +96,7 @@ class Piece(object):
         #if valid coordinates pass!Need to add that check
         #pass in each new coordinate into validMove,using the x and y values as the dx and dy, x and y are 0
         for i in range(len(self.blockIDs)):
-            board.coords(self.blockIDs[i],tuple([25*j for j in newCoords[i]]))
+            board.coords(self.blockIDs[i],tuple([BLOCK_SIZE*j for j in newCoords[i]]))
             self.blocks[i].x = newCoords[i][0]
             self.blocks[i].y = newCoords[i][1]
 

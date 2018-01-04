@@ -47,7 +47,12 @@ def timerFired(root,board):
 def drawGrid(board):
     for x in range(WIDTH//BLOCK_SIZE):
         for y in range(HEIGHT//BLOCK_SIZE):
-            board.create_rectangle(x*BLOCK_SIZE, y*BLOCK_SIZE, (x+1)*BLOCK_SIZE, (y+1)*BLOCK_SIZE, outline = 'black', fill = 'white',tag = 'grid')
+            board.create_rectangle(x*BLOCK_SIZE, y*BLOCK_SIZE, 
+                                   (x+1)*BLOCK_SIZE, 
+                                   (y+1)*BLOCK_SIZE, 
+                                   outline = 'black', 
+                                   fill = 'white',
+                                   tag = 'grid')
 def genPiece(board):
     keys = ['I','O','T', 'S', 'Z', 'J', 'L']
     return block.Piece(random.choice(keys),random.randint(0,6),board)
@@ -55,7 +60,10 @@ def genPiece(board):
 def delRows(board,p):
     global imgTK
     for i in range(19,0,-1):
-        olDel = set(board.find_overlapping(BLOCK_SIZE/4,BLOCK_SIZE*(i)+(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*i + (BLOCK_SIZE *(3/4))))
+        olDel = set(board.find_overlapping(BLOCK_SIZE/4,
+                                           BLOCK_SIZE*(i)+(BLOCK_SIZE/4),
+                                           BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),
+                                           BLOCK_SIZE*i + (BLOCK_SIZE *(3/4))))
         other = set(board.find_all()) - set(board.find_withtag('grid'))#- set(board.find_withtag('del'))
         if(len(olDel & other) == 10):
             for j in (olDel & other):
@@ -65,7 +73,11 @@ def delRows(board,p):
 #                board.delete(im)
 #            for j in list(set(board.find_all()) - set(board.find_withtag('grid')) - set(p.blockIDs)):
 #                board.move(j,0,25)
-            for j in (set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),BLOCK_SIZE*(i-1) + (BLOCK_SIZE *(3/4))))-set(board.find_withtag('grid'))-set(p.blockIDs)):
+            for j in (set(board.find_overlapping(BLOCK_SIZE/4,
+                                                 (BLOCK_SIZE/4),
+                                                 BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),
+                                                 BLOCK_SIZE*(i-1) + (BLOCK_SIZE *(3/4)))) \
+            -set(board.find_withtag('grid'))-set(p.blockIDs)):
                 board.move(j,0,25)
 def lose(root,board,p):
     olLose = set(board.find_overlapping(BLOCK_SIZE/4,(BLOCK_SIZE/4),BLOCK_SIZE*9+(BLOCK_SIZE*(3/4)),(BLOCK_SIZE *(3/4))))
